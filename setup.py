@@ -8,10 +8,11 @@ with open('readme.rst') as f:
 
 setup(
     name='imgspy',
-    version='0.1.0',
+    version='0.1.1',
     description='Find the size or type of the image without '
                 'fetching the whole content.',
     long_description=readme,
+    url='https://github.com/nkanaev/imgspy',
     license='MIT',
     author='Nazar Kanaev',
     author_email='nkanaev@live.com',
