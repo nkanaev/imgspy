@@ -15,4 +15,5 @@ setup(
     license='MIT',
     author='Nazar Kanaev',
     author_email='nkanaev@live.com',
+    py_modules=['imgspy'],
     test_suite='tests')
