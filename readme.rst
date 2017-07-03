@@ -14,3 +14,8 @@ usage
     >>> imgspy.size('/path/to/image.jpg')
     (1920, 1980)
 
+tests
+-----
+
+.. image:: https://travis-ci.org/nkanaev/imgspy.svg?branch=master
+    :target: https://travis-ci.org/nkanaev/imgspy
