@@ -75,3 +75,13 @@ def probe(stream):
         w = 256 if w == 0 else w
         h = 256 if h == 0 else h
         return {'type': img_type, 'width': w, 'height': h, 'num_images': num_images}
+    elif chunk.startswith(b'BM'):
+        headersize = struct.unpack("<I", chunk[14:18])[0]
+        if headersize == 12:
+            w, h = struct.unpack("<HH", chunk[18:22])
+        elif headersize >= 40:
+            w, h = struct.unpack("<ii", chunk[18:26])
+        else:
+            return None
+        return {'type': 'bmp', 'width': w, 'height': h}
+
