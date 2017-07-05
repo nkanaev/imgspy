@@ -33,10 +33,9 @@ def openstream(input):
             yield io.BytesIO(base64.b64decode(parts[1][7:]))
 
 
-def size(input):
+def info(input):
     with openstream(input) as stream:
-        _, width, height = probe(stream)
-        return width, height
+        return probe(stream)
 
 
 def probe(stream):
@@ -49,17 +48,17 @@ def probe(stream):
         else:
             # todo: fried png's http://www.jongware.com/pngdefry.html
             w, h = struct.unpack(">LL", chunk[8:16])
-        return 'png', w, h
+        return {'type': 'png', 'width': w, 'height': h}
     elif chunk.startswith(b'GIF89a') or chunk.startswith(b'GIF87a'):
         w, h = struct.unpack('<HH', chunk[6:10])
-        return 'gif', w, h
+        return {'type': 'gif', 'width': w, 'height': h}
     elif chunk.startswith(b'\xff\xd8'):
         start = 0
         data = chunk
         while True:
             chunk = stream.read(10)
             if not chunk:
-                return None, None, None
+                return None
             data += chunk
             next = data.find(b'\xff', start + 1)
             if next == -1:
@@ -68,5 +67,11 @@ def probe(stream):
             data += stream.read(10)
             if data[start+1] in b'\xc0\xc2':
                 h, w = struct.unpack('>HH', data[start+5:start+9])
-                return 'jpg', w, h
-    return None, None, None
+                return {'type': 'jpg', 'width': w, 'height': h}
+    elif chunk.startswith(b'\x00\x00\x01\x00') or chunk.startswith(b'\x00\x00\x02\x00'):
+        img_type = 'ico' if chunk[2] == 1 else 'cur'
+        num_images = struct.unpack('<H', chunk[4:6])[0]
+        w, h = struct.unpack('BB', chunk[6:8])
+        w = 256 if w == 0 else w
+        h = 256 if h == 0 else h
+        return {'type': img_type, 'width': w, 'height': h, 'num_images': num_images}
