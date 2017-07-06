@@ -10,10 +10,6 @@ FORMAT = 'sample(?P<width>\d+)x(?P<height>\d+)(?P<comment>[^.]*).(?P<format>\w+)
 
 
 class TestAll(unittest.TestCase):
-    def assert_dict_contains(self, result, subset, msg=None):
-        # todo: diff message
-        self.assertTrue(set(subset.items()).issubset(set(result.items())), msg=msg)
-
     def test_files(self):
         for filename in os.listdir(os.path.join(BASEDIR, 'fixtures')):
             match = re.match(FORMAT, filename)
@@ -26,9 +22,9 @@ class TestAll(unittest.TestCase):
                 'width': int(match.group('width')),
                 'height': int(match.group('height')),
             }
-            self.assert_dict_contains(result_actual, result_expected, msg=filename)
+            self.assertDictContainsSubset(result_expected, result_actual, msg=filename)
             with open(filepath, 'rb') as f:
-                self.assert_dict_contains(imgspy.info(f), result_expected, msg=filename)
+                self.assertDictContainsSubset(result_expected, imgspy.info(f), msg=filename)
 
     def test_datastr(self):
         data = textwrap.dedent('''data:image/png;base64,
@@ -44,7 +40,7 @@ class TestAll(unittest.TestCase):
             domain + '/500x500.jpg': {'type': 'jpg', 'width': 500, 'height': 500},
         }
         for url, result_expected in urls.items():
-            self.assertEqual(result_expected, imgspy.info(url))
+            self.assertDictContainsSubset(result_expected, imgspy.info(url))
 
 
 if __name__ == '__main__':

@@ -69,7 +69,7 @@ def probe(stream):
                 h, w = struct.unpack('>HH', data[start+5:start+9])
                 return {'type': 'jpg', 'width': w, 'height': h}
     elif chunk.startswith(b'\x00\x00\x01\x00') or chunk.startswith(b'\x00\x00\x02\x00'):
-        img_type = 'ico' if chunk[2] == 1 else 'cur'
+        img_type = 'ico' if chunk[2:3] == b'\x01' else 'cur'
         num_images = struct.unpack('<H', chunk[4:6])[0]
         w, h = struct.unpack('BB', chunk[6:8])
         w = 256 if w == 0 else w
