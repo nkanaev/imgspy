@@ -58,7 +58,7 @@ def probe(stream):
         while True:
             chunk = stream.read(10)
             if not chunk:
-                return None
+                return
             data += chunk
             next = data.find(b'\xff', start + 1)
             if next == -1:
@@ -82,6 +82,33 @@ def probe(stream):
         elif headersize >= 40:
             w, h = struct.unpack("<ii", chunk[18:26])
         else:
-            return None
+            return
         return {'type': 'bmp', 'width': w, 'height': h}
+    elif chunk.startswith(b'MM\x00\x2a') or chunk.startswith(b'II\x2a\x00'):
+        w, h, orientation = None, None, None
+
+        endian = '>' if chunk[0:2] == b'MM' else '<'
+        offset = struct.unpack(endian + 'I', chunk[4:8])[0]
+        chunk += stream.read(offset - len(chunk) + 2)
+
+        tag_count = struct.unpack(endian + 'H', chunk[offset:offset+2])[0]
+        offset += 2
+        for i in range(tag_count):
+            if len(chunk) - offset < 12:
+                chunk += stream.read(12)
+            type = struct.unpack(endian + 'H', chunk[offset:offset+2])[0]
+            data = struct.unpack(endian + 'H', chunk[offset+8:offset+10])[0]
+            offset += 12
+            if type == 0x100:
+                w = data
+            elif type == 0x101:
+                h = data
+            elif type == 0x112:
+                orientation = data
+            if all([w, h, orientation]):
+                break
+
+        if orientation >= 5:
+            w, h = h, w
+        return {'type': 'tiff', 'width': w, 'height': h, 'orientation': orientation}
 
