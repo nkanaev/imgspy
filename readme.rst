@@ -1,7 +1,7 @@
 imgspy
 ======
 
-imgspy finds the metadata (type, size) of an image given its url by fetching as little as needed. This is a python implementation of `fastimage`_. Supports image types BMP, CUR, GIF, ICO, JPEG, PNG.
+imgspy finds the metadata (type, size) of an image given its url by fetching as little as needed. This is a python implementation of `fastimage`_. Supports image types BMP, CUR, GIF, ICO, JPEG, PNG, TIFF.
 
 .. _fastimage: https://github.com/sdsykes/fastimage
 
