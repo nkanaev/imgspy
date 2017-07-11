@@ -111,4 +111,18 @@ def probe(stream):
         if orientation >= 5:
             w, h = h, w
         return {'type': 'tiff', 'width': w, 'height': h, 'orientation': orientation}
-
+    elif chunk[:4] == b'RIFF' and chunk[8:15] == b'WEBPVP8':
+        # todo: scales, orientation & validations
+        w, h = None, None
+        type = chunk[15:16]
+        chunk += stream.read(30 - len(chunk))
+        if type == b' ':
+            w, h = struct.unpack('<HH', chunk[26:30])
+            w, h = w & 0x3fff, h & 0x3fff
+        elif type == b'L':
+            w = 1 + (((ord(chunk[22:23]) & 0x3F) << 8) | ord(chunk[21:22]))
+            h = 1 + (((ord(chunk[24:25]) & 0xF) << 10) | (ord(chunk[23:24]) << 2) | ((ord(chunk[22:23]) & 0xC0) >> 6))
+        elif type == b'X':
+            w = 1 + struct.unpack('<I', chunk[24:27] + b'\x00')[0]
+            h = 1 + struct.unpack('<I', chunk[27:30] + b'\x00')[0]
+        return {'type': 'webp', 'width': w, 'height': h}
