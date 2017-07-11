@@ -126,3 +126,7 @@ def probe(stream):
             w = 1 + struct.unpack('<I', chunk[24:27] + b'\x00')[0]
             h = 1 + struct.unpack('<I', chunk[27:30] + b'\x00')[0]
         return {'type': 'webp', 'width': w, 'height': h}
+    elif chunk.startswith(b'8BPS'):
+        h, w = struct.unpack('>LL', chunk[14:22])
+        return {'type': 'psd', 'width': w, 'height': h}
+
