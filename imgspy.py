@@ -13,16 +13,13 @@ PY2 = sys.version_info[0] == 2
 
 if PY2:
     from urllib import urlopen
-    binary_type = str
 else:
     from urllib.request import urlopen
-    binary_type = bytes
 
 
 @contextlib.contextmanager
 def openstream(input):
     if hasattr(input, 'read'):
-        input.seek(0)
         yield input
     elif os.path.isfile(input):
         with open(input, 'rb') as f:

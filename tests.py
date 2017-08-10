@@ -1,8 +1,17 @@
 import re
 import os
+import sys
 import imgspy
 import unittest
 import textwrap
+
+
+PY2 = sys.version_info[0] == 2
+
+if PY2:
+    from urllib import urlopen
+else:
+    from urllib.request import urlopen
 
 
 BASEDIR = os.path.dirname(os.path.abspath(__file__))
@@ -40,8 +49,10 @@ class TestAll(unittest.TestCase):
             domain + '/500x500.jpg': {'type': 'jpg', 'width': 500, 'height': 500},
         }
         for url, result_expected in urls.items():
+            self.assertDictContainsSubset(result_expected, imgspy.info(urlopen(url)))
             self.assertDictContainsSubset(result_expected, imgspy.info(url))
 
 
 if __name__ == '__main__':
     unittest.main()
+
