@@ -45,8 +45,11 @@ def probe(stream):
     if chunk.startswith(b'\x89PNG\r\n\x1a\n'):
         if chunk[12:16] == b'IHDR':
             w, h = struct.unpack(">LL", chunk[16:24])
+        elif chunk[12:16] == b'CgBI':
+            # fried png http://www.jongware.com/pngdefry.html
+            chunk += stream.read(40 - len(chunk))
+            w, h = struct.unpack('>LL', chunk[32:40])
         else:
-            # todo: fried png's http://www.jongware.com/pngdefry.html
             w, h = struct.unpack(">LL", chunk[8:16])
         return {'type': 'png', 'width': w, 'height': h}
     elif chunk.startswith(b'GIF89a') or chunk.startswith(b'GIF87a'):
@@ -112,7 +115,6 @@ def probe(stream):
             w, h = h, w
         return {'type': 'tiff', 'width': w, 'height': h, 'orientation': orientation}
     elif chunk[:4] == b'RIFF' and chunk[8:15] == b'WEBPVP8':
-        # todo: scales, orientation & validations
         w, h = None, None
         type = chunk[15:16]
         chunk += stream.read(30 - len(chunk))
