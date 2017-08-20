@@ -1,33 +1,14 @@
 # coding: utf-8
-"""
-imgspy
-======
-
-imgspy finds the metadata (type, size) of an image given its url by fetching
-as little as needed. This is a python implementation of `fastimage`_. Supports
-image types BMP, CUR, GIF, ICO, JPEG, PNG, PSD, TIFF, WEBP.
-
-.. _fastimage: https://github.com/sdsykes/fastimage
-
-usage
------
-
-::
-
-    >>> imgspy.info('http://via.placeholder.com/1920x1080')
-    {'type': 'png', 'width': 1920, 'height': 1080}
-    >>> imgspy.info('/path/to/image.jpg')
-    {'type': 'jpg', 'width': 420, 'height': 240}
-"""
 from setuptools import setup
+import imgspy
 
 
 setup(
     name='imgspy',
-    version='0.2.0',
+    version=imgspy.__version__,
     description='Find the size or type of the image without '
                 'fetching the whole content.',
-    long_description=__doc__,
+    long_description=imgspy.__doc__,
     url='https://github.com/nkanaev/imgspy',
     license='MIT',
     keywords='fastimage image size',
