@@ -83,21 +83,17 @@ def probe(stream):
         w, h = struct.unpack('<HH', chunk[6:10])
         return {'type': 'gif', 'width': w, 'height': h}
     elif chunk.startswith(b'\xff\xd8'):
-        start = 0
+        start = 2
         data = chunk
         while True:
-            chunk = stream.read(10)
-            if not chunk:
+            if data[start:start+1] != b'\xff':
                 return
-            data += chunk
-            next = data.find(b'\xff', start + 1)
-            if next == -1:
-                continue
-            start = next
-            data += stream.read(10)
             if data[start+1] in b'\xc0\xc2':
                 h, w = struct.unpack('>HH', data[start+5:start+9])
                 return {'type': 'jpg', 'width': w, 'height': h}
+            segment_size, = struct.unpack('>H', data[start+2:start+4])
+            data += stream.read(segment_size + 9)
+            start = start + segment_size + 2
     elif chunk.startswith(b'\x00\x00\x01\x00') or chunk.startswith(b'\x00\x00\x02\x00'):
         img_type = 'ico' if chunk[2:3] == b'\x01' else 'cur'
         num_images = struct.unpack('<H', chunk[4:6])[0]
