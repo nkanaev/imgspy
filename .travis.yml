@@ -1,3 +1,4 @@
+dist: xenial
 language: python
-python: ['2.7', '3.6']
-script: python tests.py
+python: ['3.4', '3.5', '3.6', '3.7']
+script: python3 setup.py test

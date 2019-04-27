@@ -1,6 +1,16 @@
 # coding: utf-8
 from setuptools import setup
+from setuptools.command.test import test as TestCommand
+
 import imgspy
+
+
+class PyTestCommand(TestCommand):
+    user_options = [("pytest-args=", "a", "Arguments to pass to pytest")]
+
+    def run_tests(self):
+        import sys, pytest
+        sys.exit(pytest.main([]))
 
 
 setup(
@@ -25,5 +35,7 @@ setup(
     author='Nazar Kanaev',
     author_email='nkanaev@live.com',
     py_modules=['imgspy'],
-    test_suite='tests'
+    test_suite='tests',
+    tests_require=['pytest'],
+    cmdclass={"test": PyTestCommand},
 )
