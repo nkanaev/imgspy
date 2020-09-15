@@ -21,8 +21,5 @@ usage
     ...     imgspy.info(f)
     {'type': 'jpg', 'width': 420, 'height': 240}
 
-tests
------
-
-.. image:: https://travis-ci.org/nkanaev/imgspy.svg?branch=master
-    :target: https://travis-ci.org/nkanaev/imgspy
+.. image:: https://github.com/nkanaev/imgspy/workflows/test/badge.svg
+    :target: https://github.com/nkanaev/imgspy/actions
